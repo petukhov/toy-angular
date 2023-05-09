@@ -1,0 +1,11 @@
+{
+  "name": "dev",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "tsx main.ts"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.7"
+  }
+}
