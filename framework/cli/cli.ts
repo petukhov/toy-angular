@@ -2,8 +2,35 @@
 
 // }
 
-export function build(config) {
-    console.log('building');
+// @ts-ignore
+import fs from 'node:fs';
+
+interface Config {
+    entryFile: string
+}
+
+function readDefaultConfig(): Config {
+    const config = fs.readFileSync('toy-angular.json', 'utf-8');
+    return JSON.parse(config);
+}
+
+function findConfigByPath(path: string): Config {
+    const config = fs.readFileSync(path, 'utf-8');
+    return JSON.parse(config);
+}
+
+export function build(pathToConfig?: string) {
+    console.log('Building...');
+    let config;
+    if (pathToConfig) {
+        config = findConfigByPath(pathToConfig);
+    } else {
+        config = readDefaultConfig();
+    }
+
+    console.log('entry file:', config.entryFile);
+
+    // fs.
     // PRE-PROCESS
     // find the entry file from the config.
     // get all the dependencies of the entry file. Use ts compiler for that.

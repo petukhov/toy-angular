@@ -1,4 +1,6 @@
-console.log('hello');
+import { bootstrap } from 'toy-angular';
+
+console.log('main app file');
 
 // Buld (or Serve, it doens't matter now) command:
 // read the config json
@@ -10,3 +12,6 @@ console.log('hello');
 // compile the html template.
 
 // Parse and compile the html templates:
+
+bootstrap();
+

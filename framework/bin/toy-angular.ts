@@ -2,4 +2,4 @@
 
 import { build } from '../cli/cli';
 
-build({});
+build();

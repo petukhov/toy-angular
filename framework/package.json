@@ -2,8 +2,11 @@
     "name": "toy-angular",
     "version": "1.0.1",
     "description": "",
+    "main": "index.ts",
     "bin": {
-      "toy-angular": "./bin/toy-angular.ts"
+        "toy-angular": "./bin/toy-angular.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.17"
     }
-  }
-  
+}
