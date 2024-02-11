@@ -2,7 +2,8 @@
 
 // }
 
-function build(config) {
+export function build(config) {
+    console.log('building');
     // PRE-PROCESS
     // find the entry file from the config.
     // get all the dependencies of the entry file. Use ts compiler for that.

@@ -1,3 +1,9 @@
 {
-    
-}
+    "name": "toy-angular",
+    "version": "1.0.1",
+    "description": "",
+    "bin": {
+      "toy-angular": "./bin/toy-angular.ts"
+    }
+  }
+  
