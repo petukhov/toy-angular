@@ -1,6 +1,6 @@
 {
     "name": "toy-angular",
-    "version": "1.0.1",
+    "version": "0.0.1",
     "description": "",
     "main": "index.ts",
     "bin": {
@@ -8,5 +8,10 @@
     },
     "devDependencies": {
         "@types/node": "^20.11.17"
+    },
+    "dependencies": {
+        "esbuild": "^0.20.0",
+        "open": "^10.0.3",
+        "typescript": "^5.3.3"
     }
 }

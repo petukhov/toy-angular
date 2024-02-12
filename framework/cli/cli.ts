@@ -1,9 +1,8 @@
-// function serve() {
-
-// }
-
 // @ts-ignore
 import fs from 'node:fs';
+import tsc, { CompilerOptions, createSourceFile } from 'typescript';
+import * as esbuild from 'esbuild';
+import open from 'open';
 
 interface Config {
     entryFile: string
@@ -19,8 +18,11 @@ function findConfigByPath(path: string): Config {
     return JSON.parse(config);
 }
 
-export function build(pathToConfig?: string) {
+export async function build(pathToConfig?: string) {
     console.log('Building...');
+
+    const currDir = process.cwd();
+
     let config;
     if (pathToConfig) {
         config = findConfigByPath(pathToConfig);
@@ -29,6 +31,27 @@ export function build(pathToConfig?: string) {
     }
 
     console.log('entry file:', config.entryFile);
+    // use ts compiler to get all the dependencies of the entry file.
+    const opts: CompilerOptions = {
+        target: tsc.ScriptTarget.ES5,
+        module: tsc.ModuleKind.CommonJS,
+    };
+
+    let ctx = await esbuild.context({
+        entryPoints: [config.entryFile],
+        outdir: 'www/js',
+        bundle: true,
+      })
+
+    let { host, port } = await ctx.serve({
+        servedir: 'www',
+    });
+
+    await open(`http://${host}:${port}`, { app: { name: 'google chrome' } });
+
+    // const program = tsc.createProgram([config.entryFile], opts);
+    // compile the files into one file.
+    // program.emit();
 
     // fs.
     // PRE-PROCESS

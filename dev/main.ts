@@ -1,4 +1,5 @@
 import { bootstrap } from 'toy-angular';
+import { AppComponent } from './components/app.component';
 
 console.log('main app file');
 
@@ -13,5 +14,5 @@ console.log('main app file');
 
 // Parse and compile the html templates:
 
-bootstrap();
+bootstrap(AppComponent);
 
