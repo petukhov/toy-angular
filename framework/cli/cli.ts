@@ -50,8 +50,7 @@ export async function build(pathToConfig?: string) {
     await open(`http://${host}:${port}`, { app: { name: 'google chrome' } });
 
     // const program = tsc.createProgram([config.entryFile], opts);
-    // compile the files into one file.
-    // program.emit();
+    // program.
 
     // fs.
     // PRE-PROCESS

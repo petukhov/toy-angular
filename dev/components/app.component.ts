@@ -1,9 +1,13 @@
-import { Component } from 'toy-angular';
+import { Component } from "toy-angular";
 
 @Component({
-    selector: "app-root",
-    template: "<h1>My First Angular App</h1>",
-    
+  selector: "app-root",
+  template: `
+    <div id="this-is-id" something="hello">
+        Parent
+        <span>My First Angular App</span>
+    </div>
+  `,
 })
 export class AppComponent {
   constructor() {
