@@ -1,7 +1,7 @@
 type NodeType = 'element' | 'text';
-type Node = ElementNode | TextNode;
+export type Node = ElementNode | TextNode;
 
-interface ElementNode {
+export interface ElementNode {
   type: NodeType;
   tagName: string;
   attributes: Record<string, string>;

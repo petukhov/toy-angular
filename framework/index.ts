@@ -1,4 +1,4 @@
-import { TemplateParser } from './template-parser';
+import { ElementNode, TemplateParser } from './template-parser';
 
 export function bootstrap(component) {
   console.warn("Bootstrapping...", component);
@@ -12,6 +12,14 @@ function parseTemplate(template: string) {
   return ast;
 }
 
+// Function that compiles the template's AST into step-by-step instructions to create the DOM nodes
+function compile(ast: ElementNode | null) {
+  if (!ast) {
+    return [];
+  }
+  return ast;
+}
+
 export function Component(options: {
   selector: string;
   template: string;
@@ -19,6 +27,8 @@ export function Component(options: {
   return function (target: any) {
     // Add the selector and template properties to the component class
     target.prototype.selector = options.selector;
-    target.prototype.template = parseTemplate(options.template);
+    target.prototype.template = options.template;
+    target.prototype.someFunction = new Function("x", "y", "return x * y");
+    target.prototype.compiledTmpl = compile(parseTemplate(options.template));
   };
 }

@@ -3,11 +3,15 @@
     "version": "0.0.1",
     "description": "",
     "main": "index.ts",
+    "scripts": {
+        "test": "tsx test.ts"
+    },
     "bin": {
         "toy-angular": "./bin/toy-angular.ts"
     },
     "devDependencies": {
-        "@types/node": "^20.11.17"
+        "@types/node": "^20.11.17",
+        "tsx": "^3.12.7"
     },
     "dependencies": {
         "esbuild": "^0.20.0",
