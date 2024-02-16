@@ -34,17 +34,48 @@ i0.\u0275\u0275defineComponent({
     styles: ["\n\n# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFtdLAogICJzb3VyY2VzQ29udGVudCI6IFtdLAogICJtYXBwaW5ncyI6ICIiLAogICJuYW1lcyI6IFtdCn0K"]
 });
  */
+
+export interface InstructionParams {
+    tagName: string;
+    ref: number;
+}
+
+const refMap = new Map<number, HTMLElement>();
+// const childNodes: HTMLElement[] = [];
+const nodeStack: HTMLElement[] = []
  
-const elStart = () => {};
-const text = () => {};
-const elEnd = () => {};
-const advance = () => {};
+const elStart = (params: InstructionParams) => {
+    const el = document.createElement(params.tagName);
+    // refMap.set(params.ref, el);
+    const parent = nodeStack[nodeStack.length - 1];
+    parent?.appendChild(el);
+    nodeStack.push(el);
+    return el;
+};
+const text = (params: InstructionParams) => {
+    const el = document.createTextNode('text');
+    const parent = nodeStack[nodeStack.length - 1];
+    parent?.appendChild(el);
+    return el;
+};
+const elEnd = (params: InstructionParams) => {
+    // const el = refMap.get(params.ref);
+    // refMap.delete(params.ref);
+    return nodeStack.pop()!;
+    // if (el) {
+    //     refMap.get(params.ref)?.appendChild(el);
+    // }
+};
+// const advance = (arg: string) => {};
 
 export class InstructionsEmitter {
-    instructions: [() => void, type: string][] = [];
+    instructions: [(arg: InstructionParams) => HTMLElement | Text, type: InstructionParams][] = [];
+    refCounter = 0;
 
     emit(originalEl: ElementNode) {
-        this.instructions.push([elStart, originalEl.tagName]);
+        const ref = this.refCounter++;
+
+        this.instructions.push([elStart, { tagName: originalEl.tagName, ref }]);
 
         let elements = (originalEl as ElementNode).children;
         let cursor = 0;
@@ -53,12 +84,12 @@ export class InstructionsEmitter {
             if (el.type === 'element') {
                 this.emit(el as ElementNode);
             } else if (el.type === 'text') {
-                this.instructions.push([text, 'text']);
+                this.instructions.push([text, { tagName: 'text', ref }]);
             }
             el = elements[++cursor];
         }
 
-        this.instructions.push([elEnd, originalEl.tagName]);
+        this.instructions.push([elEnd, { tagName: originalEl.tagName, ref }]);
         return this.instructions;
     }
 }

@@ -1,7 +1,19 @@
+import { InstructionParams, InstructionsEmitter } from './instructions-emitter';
 import { ElementNode, TemplateParser } from './template-parser';
 
-export function bootstrap(component) {
+function compileToNode(instructions: [(arg: InstructionParams) => HTMLElement | Text, InstructionParams][]) {
+  let res;
+  for (let i = 0; i < instructions.length; i++) {
+      const [fn, arg] = instructions[i];
+      res = fn(arg);
+  }
+  return res;
+}
+
+export function bootstrap(component: any) {
   console.warn("Bootstrapping...", component);
+  const node = compileToNode(component.prototype.compiledTmpl);
+  document.body.appendChild(node);
 }
 
 // parse the xml template and return the parsed AST
@@ -14,10 +26,9 @@ function parseTemplate(template: string) {
 
 // Function that compiles the template's AST into step-by-step instructions to create the DOM nodes
 function compile(ast: ElementNode | null) {
-  if (!ast) {
-    return [];
-  }
-  return ast;
+  const emitter = new InstructionsEmitter();
+  const instructions = emitter.emit(ast!);
+  return instructions;
 }
 
 export function Component(options: {

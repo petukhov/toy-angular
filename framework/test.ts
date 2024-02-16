@@ -16,4 +16,3 @@ console.log("AST:", JSON.stringify(ast, null, 2));
 const emitter = new InstructionsEmitter();
 const instructions = emitter.emit(ast!);
 console.log("Instructions:", instructions);
-
