@@ -40,8 +40,6 @@ export interface InstructionParams {
     ref: number;
 }
 
-const refMap = new Map<number, HTMLElement>();
-// const childNodes: HTMLElement[] = [];
 const nodeStack: HTMLElement[] = []
  
 const elStart = (params: InstructionParams) => {
@@ -59,12 +57,7 @@ const text = (params: InstructionParams) => {
     return el;
 };
 const elEnd = (params: InstructionParams) => {
-    // const el = refMap.get(params.ref);
-    // refMap.delete(params.ref);
     return nodeStack.pop()!;
-    // if (el) {
-    //     refMap.get(params.ref)?.appendChild(el);
-    // }
 };
 // const advance = (arg: string) => {};
 
