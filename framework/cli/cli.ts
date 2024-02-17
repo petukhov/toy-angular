@@ -43,6 +43,8 @@ export async function build(pathToConfig?: string) {
         bundle: true,
       })
 
+    await ctx.watch();
+
     let { host, port } = await ctx.serve({
         servedir: 'www',
     });

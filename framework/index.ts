@@ -11,9 +11,10 @@ function compileToNode(instructions: [(arg: InstructionParams) => HTMLElement | 
 }
 
 export function bootstrap(component: any) {
-  console.warn("Bootstrapping...", component);
+  console.warn("Bootstrapping!!...", component);
   const node = compileToNode(component.prototype.compiledTmpl);
   document.body.appendChild(node);
+  new EventSource('/esbuild').addEventListener('change', () => location.reload());
 }
 
 // parse the xml template and return the parsed AST
