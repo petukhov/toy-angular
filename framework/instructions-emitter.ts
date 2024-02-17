@@ -39,12 +39,17 @@ export interface InstructionParams {
     tagName: string;
     ref: number;
     content?: string;
+    attrs?: Record<string, string>;
 }
 
 const nodeStack: HTMLElement[] = []
  
 const elStart = (params: InstructionParams) => {
     const el = document.createElement(params.tagName);
+    const attrs = params.attrs ?? {};
+    for (const key in attrs) {
+        el.setAttribute(key, attrs[key]);
+    }
     const parent = nodeStack[nodeStack.length - 1];
     parent?.appendChild(el);
     nodeStack.push(el);
@@ -69,7 +74,7 @@ export class InstructionsEmitter {
     emit(originalEl: ElementNode) {
         const ref = this.refCounter++;
 
-        this.instructions.push([elStart, { tagName: originalEl.tagName, ref }]);
+        this.instructions.push([elStart, { tagName: originalEl.tagName, ref, attrs: originalEl.attributes }]);
 
         let elements = (originalEl as ElementNode).children;
         let cursor = 0;
