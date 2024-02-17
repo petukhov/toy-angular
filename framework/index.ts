@@ -12,8 +12,10 @@ function compileToNode(instructions: [(arg: InstructionParams) => HTMLElement | 
 
 export function bootstrap(component: any) {
   console.warn("Bootstrapping!!...", component);
+  const selector = component.prototype.selector;
   const node = compileToNode(component.prototype.compiledTmpl);
-  document.body.appendChild(node);
+  const parentNode = document.querySelector(selector);
+  parentNode.appendChild(node);
   new EventSource('/esbuild').addEventListener('change', () => location.reload());
 }
 
@@ -40,7 +42,6 @@ export function Component(options: {
     // Add the selector and template properties to the component class
     target.prototype.selector = options.selector;
     target.prototype.template = options.template;
-    target.prototype.someFunction = new Function("x", "y", "return x * y");
     target.prototype.compiledTmpl = compile(parseTemplate(options.template));
   };
 }
