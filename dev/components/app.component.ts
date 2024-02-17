@@ -4,12 +4,16 @@ import { Component } from "toy-angular";
   selector: "app-root",
   template: `
     <div id="this-is-id" something="hello">
-        <h1>Some title</h1>
-        <span>My First Angular App</span>
+        <h1>This is Toy Angular</h1>
+        <span>Let's play!</span>
+        {{ someValue }}
     </div>
   `,
 })
 export class AppComponent {
+
+  someValue = 123;
+
   constructor() {
     console.log("AppComponent");
   }

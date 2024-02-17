@@ -2,9 +2,10 @@ import { InstructionsEmitter } from './instructions-emitter';
 import { TemplateParser } from './template-parser';
 
 const tmpl = `
-<div id="this-is-id" something="hello">
+<div id="this-is-id" something="{{ someValue }}">
     Parent
     <span>My First Angular App</span>
+    {{ someValue }}
 </div>
 `;
 

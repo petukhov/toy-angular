@@ -4,10 +4,10 @@ import { ElementNode, TextNode } from "./template-parser";
 
 Original Html:
     <a routerLink="/">
-        <div [class]="val">
+        <div [class]="val + 88">
             hello
             <h1>My Store</h1>
-            {{ val }}
+            something {{ val }} 123
         </div>
     </a>
 
@@ -16,7 +16,7 @@ Original Html:
     </a>
 
 Compiled result:
-    _TopBarComponent.\u0275cmp = /* @__PURE__ 
+    _TopBarComponent.\u0275cmp = @__PURE__ 
     i0.\u0275\u0275defineComponent({
         type: _TopBarComponent,
         selectors: [["app-top-bar"]],
@@ -40,13 +40,13 @@ Compiled result:
             }
             if (rf & 2) {
                 i0.\u0275\u0275advance(1);
-                i0.\u0275\u0275classMap(ctx.val);
+                i0.\u0275\u0275classMap(ctx.val + 88);
                 i0.\u0275\u0275advance(4);
-                i0.\u0275\u0275textInterpolate1(" ", ctx.val, " ");
+                i0.\u0275\u0275textInterpolate1(" something ", ctx.val, " 123 ");
             }
         },
         dependencies: [i1.RouterLink],
-        styles: ["\n\n/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFtdLAogICJzb3VyY2VzQ29udGVudCI6IFtdLAogICJtYXBwaW5ncyI6ICIiLAogICJuYW1lcyI6IFtdCn0K"]
+        styles: ["\n\n/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFtdLAogICJzb3VyY2VzQ29udGVudCI6IFtdLAogICJtYXBwaW5ncyI6ICIiLAogICJuYW1lcyI6IFtdCn0K "]
     });
  */
 
