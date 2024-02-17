@@ -1,4 +1,4 @@
-import { ElementNode, Node } from "./template-parser";
+import { ElementNode, TextNode } from "./template-parser";
 
 /**
  * Canonical example
@@ -38,13 +38,13 @@ i0.\u0275\u0275defineComponent({
 export interface InstructionParams {
     tagName: string;
     ref: number;
+    content?: string;
 }
 
 const nodeStack: HTMLElement[] = []
  
 const elStart = (params: InstructionParams) => {
     const el = document.createElement(params.tagName);
-    // refMap.set(params.ref, el);
     const parent = nodeStack[nodeStack.length - 1];
     parent?.appendChild(el);
     nodeStack.push(el);
@@ -52,11 +52,12 @@ const elStart = (params: InstructionParams) => {
 };
 const text = (params: InstructionParams) => {
     const el = document.createTextNode('text');
+    el.textContent = params.content ?? '';
     const parent = nodeStack[nodeStack.length - 1];
     parent?.appendChild(el);
     return el;
 };
-const elEnd = (params: InstructionParams) => {
+const elEnd = (_) => {
     return nodeStack.pop()!;
 };
 // const advance = (arg: string) => {};
@@ -77,7 +78,8 @@ export class InstructionsEmitter {
             if (el.type === 'element') {
                 this.emit(el as ElementNode);
             } else if (el.type === 'text') {
-                this.instructions.push([text, { tagName: 'text', ref }]);
+                const content = (el as TextNode).content;
+                this.instructions.push([text, { tagName: 'text', ref, content}]);
             }
             el = elements[++cursor];
         }

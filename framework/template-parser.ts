@@ -8,7 +8,7 @@ export interface ElementNode {
   children: Node[];
 }
 
-interface TextNode {
+export interface TextNode {
   type: NodeType;
   content: string;
 }
