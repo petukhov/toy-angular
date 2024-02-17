@@ -4,7 +4,7 @@ import { Component } from "toy-angular";
   selector: "app-root",
   template: `
     <div id="this-is-id" something="hello">
-        Parent
+        <h1>Some title</h1>
         <span>My First Angular App</span>
     </div>
   `,

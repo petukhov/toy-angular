@@ -54,7 +54,7 @@ export class TemplateParser {
   }
 
   private parseTagName(): string {
-    const matches = this.input.slice(this.cursor).match(/^[a-z]+/i);
+    const matches = this.input.slice(this.cursor).match(/^[a-z][\w\-]*/i);
     if (!matches) {
       throw new Error('Invalid tag name');
     }
@@ -65,7 +65,7 @@ export class TemplateParser {
 
   private parseAttributes(): Record<string, string> {
     const attributes: Record<string, string> = {};
-    const attrRegex = /([a-zA-Z]+)="([^"]*)"/;
+    const attrRegex = /\s*([a-zA-Z]+)="([^"]*)"/;
   
     // Move cursor to where attributes should start
     while (this.input[this.cursor] !== '>' && !this.input.startsWith('/>', this.cursor)) {
@@ -74,7 +74,7 @@ export class TemplateParser {
       if (attrMatch) {
         const [fullMatch, attrName, attrValue] = attrMatch;
         attributes[attrName] = attrValue;
-        this.cursor += fullMatch.length + 1;
+        this.cursor += fullMatch.length;
       } else {
         // If there is no match, it means we reached the end of attributes.
         break;
@@ -102,6 +102,14 @@ export class TemplateParser {
   }
 
   private startsWith(str: string): boolean {
+    // ignore white space or new lines
+    while (this.input[this.cursor] === ' ' || this.input[this.cursor] === '\n') {
+      this.cursor++;
+    }
     return this.input.startsWith(str, this.cursor);
+  }
+
+  showCurr(count = 5): string {
+    return this.input.slice(this.cursor, this.cursor + count);
   }
 }
