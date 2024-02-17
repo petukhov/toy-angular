@@ -4,7 +4,7 @@ import { ElementNode, TextNode } from "./template-parser";
 
 Original Html:
     <a routerLink="/">
-        <div>
+        <div [class]="val">
             hello
             <h1>My Store</h1>
             {{ val }}
@@ -16,12 +16,13 @@ Original Html:
     </a>
 
 Compiled result:
+    _TopBarComponent.\u0275cmp = /* @__PURE__ 
     i0.\u0275\u0275defineComponent({
         type: _TopBarComponent,
         selectors: [["app-top-bar"]],
         decls: 10,
-        vars: 2,
-        consts: [["routerLink", "/"], ["routerLink", "/cart", 1, "button", "fancy-button"], [1, "material-icons", 3, "id"]],
+        vars: 3,
+        consts: [["routerLink", "/"], ["routerLink", "/cart", 1, "button", "fancy-button"], [1, "material-icons"]],
         template: function TopBarComponent_Template(rf, ctx) {
             if (rf & 1) {
                 i0.\u0275\u0275elementStart(0, "a", 0)(1, "div");
@@ -38,14 +39,14 @@ Compiled result:
                 i0.\u0275\u0275elementEnd();
             }
             if (rf & 2) {
-                i0.\u0275\u0275advance(5);
+                i0.\u0275\u0275advance(1);
+                i0.\u0275\u0275classMap(ctx.val);
+                i0.\u0275\u0275advance(4);
                 i0.\u0275\u0275textInterpolate1(" ", ctx.val, " ");
-                i0.\u0275\u0275advance(2);
-                i0.\u0275\u0275property("id", ctx.val);
             }
         },
         dependencies: [i1.RouterLink],
-        styles: ["\n\n# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFtdLAogICJzb3VyY2VzQ29udGVudCI6IFtdLAogICJtYXBwaW5ncyI6ICIiLAogICJuYW1lcyI6IFtdCn0K"]
+        styles: ["\n\n/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFtdLAogICJzb3VyY2VzQ29udGVudCI6IFtdLAogICJtYXBwaW5ncyI6ICIiLAogICJuYW1lcyI6IFtdCn0K"]
     });
  */
 
