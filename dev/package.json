@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "toy-angular": "toy-angular"
+    "toy-angular": "toy-angular",
+    "link-deps": "cd ../framework && yarn link && cd ../dev && yarn link toy-angular"
   },
   "devDependencies": {
     "tsx": "^3.12.7",
