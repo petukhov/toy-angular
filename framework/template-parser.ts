@@ -4,13 +4,49 @@ export type Node = ElementNode | TextNode;
 export interface ElementNode {
   type: NodeType;
   tagName: string;
-  attributes: Record<string, string>;
+  attributes: Record<string, string | DynamicText>;
   children: Node[];
 }
 
 export interface TextNode {
   type: NodeType;
-  content: string;
+  content: string | DynamicText;
+}
+
+export interface DynamicText {
+  varIds: string[];
+  factory: (env: any) => string;
+}
+
+function string2Factory(input: string): (env: any) => string {
+  // Split the string by the pattern '{{' or '}}'
+  const parts = input.split(/({{)|(}})/);
+
+  // The result array
+  const result: { isVar: boolean, value: string }[] = [];
+
+  // Variable to keep track of whether we're inside the braces
+  let insideBraces = false;
+
+  for (let part of parts) {
+    if (part === '{{') {
+      insideBraces = true;
+    } else if (part === '}}') {
+      insideBraces = false;
+    } else if (insideBraces) {
+      // If the part is not null and we're inside braces, push it to the result
+      part && result.push({ value: part, isVar: true });
+      insideBraces = false; // Reset the flag as we only expect single pairs of braces
+    } else {
+      // If the part is not null and we're outside braces, push it to the result
+      part && result.push({ value: part, isVar: false });
+    }
+  }
+
+  return (env: any) => 
+    result.reduce((prev, curr) => 
+      prev + curr.isVar ? env[curr.value] : curr.value
+    );
 }
 
 export class TemplateParser {
@@ -87,6 +123,22 @@ export class TemplateParser {
     const endOfText = this.input.indexOf('<', this.cursor);
     const content = this.input.slice(this.cursor, endOfText);
     this.cursor = endOfText;
+
+    const regex = /{{(.*)}}/;
+    const matched = content.match(regex);
+    if (matched.length) {
+      const varIds = matched?.slice(1);
+      const factory = string2Factory(content);
+
+      return {
+        type: 'text',
+        content: {
+          varIds,
+          factory
+        }
+      }
+    }
+
     return {
       type: 'text',
       content: content.trim(),
