@@ -1,4 +1,4 @@
-type NodeType = 'element' | 'text';
+type NodeType = "element" | "text";
 export type Node = ElementNode | TextNode;
 
 export interface ElementNode {
@@ -20,22 +20,22 @@ export interface DynamicText {
 
 function string2Factory(input: string): (env: any) => string {
   // Split the string by the pattern '{{' or '}}'
-  const parts = input.split(/({{)|(}})/);
+  const parts = input.split(/({{)|(}})/).filter(val => !!val);
 
   // The result array
-  const result: { isVar: boolean, value: string }[] = [];
+  const result: { isVar: boolean; value: string }[] = [];
 
   // Variable to keep track of whether we're inside the braces
   let insideBraces = false;
 
   for (let part of parts) {
-    if (part === '{{') {
+    if (part === "{{") {
       insideBraces = true;
-    } else if (part === '}}') {
+    } else if (part === "}}") {
       insideBraces = false;
     } else if (insideBraces) {
       // If the part is not null and we're inside braces, push it to the result
-      part && result.push({ value: part, isVar: true });
+      part && result.push({ value: part.trim(), isVar: true });
       insideBraces = false; // Reset the flag as we only expect single pairs of braces
     } else {
       // If the part is not null and we're outside braces, push it to the result
@@ -43,56 +43,57 @@ function string2Factory(input: string): (env: any) => string {
     }
   }
 
-  return (env: any) => 
-    result.reduce((prev, curr) => 
-      prev + curr.isVar ? env[curr.value] : curr.value
+  return (env: any) =>
+    result.reduce(
+      (prev, curr) => (prev + (curr.isVar ? env[curr.value] : curr.value)),
+      ""
     );
 }
 
 export class TemplateParser {
   private cursor: number = 0;
-  private input: string = '';
+  private input: string = "";
 
   parse(input: string): ElementNode | null {
     this.cursor = 0;
     this.input = input.trim();
-    if (this.input.startsWith('<')) {
+    if (this.input.startsWith("<")) {
       return this.parseElement();
     }
     return null;
   }
 
   private parseElement(): ElementNode {
-    this.consume('<');
+    this.consume("<");
     const tagName = this.parseTagName();
     const attributes = this.parseAttributes();
-    this.consume('>');
+    this.consume(">");
 
     const children: Node[] = [];
     while (!this.startsWith(`</${tagName}>`)) {
-      if (this.startsWith('<')) {
+      if (this.startsWith("<")) {
         children.push(this.parseElement());
       } else {
         const node = this.parseText();
-        if (node.content.trim().length > 0) {
-            children.push(node);
+        if (node.content instanceof Object || (node.content as string).trim().length > 0) {
+          children.push(node);
         }
       }
     }
     this.consume(`</${tagName}>`);
 
     return {
-      type: 'element',
+      type: "element",
       tagName,
       attributes,
-      children
+      children,
     };
   }
 
   private parseTagName(): string {
     const matches = this.input.slice(this.cursor).match(/^[a-z][\w\-]*/i);
     if (!matches) {
-      throw new Error('Invalid tag name');
+      throw new Error("Invalid tag name");
     }
     const tagName = matches[0];
     this.cursor += tagName.length;
@@ -102,9 +103,12 @@ export class TemplateParser {
   private parseAttributes(): Record<string, string> {
     const attributes: Record<string, string> = {};
     const attrRegex = /\s*([a-zA-Z]+)="([^"]*)"/;
-  
+
     // Move cursor to where attributes should start
-    while (this.input[this.cursor] !== '>' && !this.input.startsWith('/>', this.cursor)) {
+    while (
+      this.input[this.cursor] !== ">" &&
+      !this.input.startsWith("/>", this.cursor)
+    ) {
       // Slice the input from the current cursor position to the first occurrence of '>'
       const attrMatch = this.input.slice(this.cursor).match(attrRegex);
       if (attrMatch) {
@@ -120,27 +124,27 @@ export class TemplateParser {
   }
 
   private parseText(): TextNode {
-    const endOfText = this.input.indexOf('<', this.cursor);
+    const endOfText = this.input.indexOf("<", this.cursor);
     const content = this.input.slice(this.cursor, endOfText);
     this.cursor = endOfText;
 
     const regex = /{{(.*)}}/;
     const matched = content.match(regex);
-    if (matched.length) {
+    if (matched?.length) {
       const varIds = matched?.slice(1);
       const factory = string2Factory(content);
 
       return {
-        type: 'text',
+        type: "text",
         content: {
           varIds,
-          factory
-        }
-      }
+          factory,
+        },
+      };
     }
 
     return {
-      type: 'text',
+      type: "text",
       content: content.trim(),
     };
   }
@@ -155,7 +159,10 @@ export class TemplateParser {
 
   private startsWith(str: string): boolean {
     // ignore white space or new lines
-    while (this.input[this.cursor] === ' ' || this.input[this.cursor] === '\n') {
+    while (
+      this.input[this.cursor] === " " ||
+      this.input[this.cursor] === "\n"
+    ) {
       this.cursor++;
     }
     return this.input.startsWith(str, this.cursor);
