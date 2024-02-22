@@ -5,8 +5,8 @@ import { Component } from "toy-angular";
   template: `
     <div id="this-is-id" something="hello">
         <h1>This is Toy Angular</h1>
-        <span>Let's play!</span>
-        {{ someValue }}
+        <p>Let's play!</p>
+        This is dynamic: {{ someValue }}.
     </div>
   `,
 })

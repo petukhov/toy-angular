@@ -4,7 +4,7 @@ export type Node = ElementNode | TextNode;
 export interface ElementNode {
   type: NodeType;
   tagName: string;
-  attributes: Record<string, string | DynamicText>;
+  attributes: Record<string, string>;
   children: Node[];
 }
 

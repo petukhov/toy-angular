@@ -1,11 +1,11 @@
 import { InstructionParams, InstructionsEmitter } from './instructions-emitter';
 import { ElementNode, TemplateParser } from './template-parser';
 
-function compileToNode(instructions: [(arg: InstructionParams) => HTMLElement | Text, InstructionParams][]) {
+function compileToNode(env, instructions: [(arg: InstructionParams) => HTMLElement | Text, InstructionParams][]) {
   let res;
   for (let i = 0; i < instructions.length; i++) {
       const [fn, arg] = instructions[i];
-      res = fn(arg);
+      res = fn({...arg, env});
   }
   return res;
 }
@@ -13,7 +13,8 @@ function compileToNode(instructions: [(arg: InstructionParams) => HTMLElement | 
 export function bootstrap(component: any) {
   console.warn("Bootstrapping!!...", component);
   const selector = component.prototype.selector;
-  const node = compileToNode(component.prototype.compiledTmpl);
+  const newComp = new component();
+  const node = compileToNode(newComp, component.prototype.compiledTmpl);
   const parentNode = document.querySelector(selector);
   parentNode.appendChild(node);
   new EventSource('/esbuild').addEventListener('change', () => location.reload());

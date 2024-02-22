@@ -1,4 +1,4 @@
-import { ElementNode, TextNode } from "./template-parser";
+import { DynamicText, ElementNode, TextNode } from "./template-parser";
 
 /** Canonical example
 
@@ -51,60 +51,67 @@ Compiled result:
  */
 
 export interface InstructionParams {
-    tagName: string;
-    ref: number;
-    content?: string;
-    attrs?: Record<string, string>;
+  tagName: string;
+  env?: any;
+  ref: number;
+  content?: string | DynamicText;
+  attrs?: Record<string, string>;
 }
 
-const nodeStack: HTMLElement[] = []
- 
+const nodeStack: HTMLElement[] = [];
+
 const elStart = (params: InstructionParams) => {
-    const el = document.createElement(params.tagName);
-    const attrs = params.attrs ?? {};
-    for (const key in attrs) {
-        el.setAttribute(key, attrs[key]);
-    }
-    const parent = nodeStack[nodeStack.length - 1];
-    parent?.appendChild(el);
-    nodeStack.push(el);
-    return el;
+  const el = document.createElement(params.tagName);
+  const attrs = params.attrs ?? {};
+  for (const key in attrs) {
+    el.setAttribute(key, attrs[key]);
+  }
+  const parent = nodeStack[nodeStack.length - 1];
+  parent?.appendChild(el);
+  nodeStack.push(el);
+  return el;
 };
 const text = (params: InstructionParams) => {
-    const el = document.createTextNode('text');
-    el.textContent = params.content ?? '';
-    const parent = nodeStack[nodeStack.length - 1];
-    parent?.appendChild(el);
-    return el;
+  const el = document.createTextNode("text");
+  el.textContent = params.content instanceof Object ? params.content.factory(params.env) : params.content ?? "";
+  const parent = nodeStack[nodeStack.length - 1];
+  parent?.appendChild(el);
+  return el;
 };
 const elEnd = (_) => {
-    return nodeStack.pop()!;
+  return nodeStack.pop()!;
 };
 // const advance = (arg: string) => {};
 
 export class InstructionsEmitter {
-    instructions: [(arg: InstructionParams) => HTMLElement | Text, type: InstructionParams][] = [];
-    refCounter = 0;
+  instructions: [
+    (arg: InstructionParams) => HTMLElement | Text,
+    type: InstructionParams
+  ][] = [];
+  refCounter = 0;
 
-    emit(originalEl: ElementNode) {
-        const ref = this.refCounter++;
+  emit(originalEl: ElementNode) {
+    const ref = this.refCounter++;
 
-        this.instructions.push([elStart, { tagName: originalEl.tagName, ref, attrs: originalEl.attributes }]);
+    this.instructions.push([
+      elStart,
+      { tagName: originalEl.tagName, ref, attrs: originalEl.attributes },
+    ]);
 
-        let elements = (originalEl as ElementNode).children;
-        let cursor = 0;
-        let el = elements[cursor];
-        while (el) {
-            if (el.type === 'element') {
-                this.emit(el as ElementNode);
-            } else if (el.type === 'text') {
-                const content = (el as TextNode).content;
-                this.instructions.push([text, { tagName: 'text', ref, content}]);
-            }
-            el = elements[++cursor];
-        }
-
-        this.instructions.push([elEnd, { tagName: originalEl.tagName, ref }]);
-        return this.instructions;
+    let elements = (originalEl as ElementNode).children;
+    let cursor = 0;
+    let el = elements[cursor];
+    while (el) {
+      if (el.type === "element") {
+        this.emit(el as ElementNode);
+      } else if (el.type === "text") {
+        const content = (el as TextNode).content;
+        this.instructions.push([text, { tagName: "text", ref, content }]);
+      }
+      el = elements[++cursor];
     }
+
+    this.instructions.push([elEnd, { tagName: originalEl.tagName, ref }]);
+    return this.instructions;
+  }
 }
